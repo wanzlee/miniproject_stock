@@ -1,6 +1,6 @@
 import datetime
 
-token = *****
+token = ***
 ticker ={ 
             "Boeing": "BA",
             "Apple": "aapl",
@@ -9,5 +9,8 @@ ticker ={
             "Airbnb": "abnb"
         }
 tdy = datetime.datetime.now().strftime("%d%b%Y")
-path = './data/IEXCloud_{}.xlsx'.format(tdy)
-stockdf = []
+path = {
+            "stockprice" : './data/IEXStockPrice_{}.xlsx'.format(tdy),
+            "news" : './data/IEXNews_{}.xlsx'.format(tdy),
+            "key" : './data/IEXKeyPerformance_{}.xlsx'.format(tdy)
+       }

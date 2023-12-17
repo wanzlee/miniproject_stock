@@ -4,44 +4,35 @@ from parameter import *
 import requests
 import json
 
-def getIEXCloudData():
-    writer = pd.ExcelWriter(path[stockprice], engine='xlsxwriter')
+class stockdata:
+    def __init__(self, ticker, module):
+        self.ticker = ticker
+        self.module = module
+        self.path = path[module]
+        self.apiurl = apiurl[module]
+     
+    def print_value(self):
+        print(self.ticker)
+        print(self.module)
+        print(self.path)
+        print(self.apiurl)
 
-    for x in ticker:
-        response = requests.get("https://cloud.iexapis.com/stable/stock/{}/chart/1y?token={}".format(ticker[x], token))
-        stockresult = json.dumps(response.json(), sort_keys=True)
-        stockdict = json.loads(stockresult)
-        stockresultdf = pd.json_normalize(stockdict) 
-        stockresultdf.to_excel(writer, sheet_name=x)
+    def getdata(self):
+        writer = pd.ExcelWriter(self.path, engine='xlsxwriter')
 
-    writer.close()
+        for x in self.ticker:
+            response = requests.get(self.apiurl.format(ticker[x], token))
+            result = json.dumps(response.json(), sort_keys=True)
+            dict = json.loads(result)
+            finaldf = pd.json_normalize(dict)
+            finaldf.to_excel(writer, sheet_name=x)
 
-def getCorporateActions():
-    writer = pd.ExcelWriter(path[news], engine='xlsxwriter')
+        writer.close()
 
-    for x in ticker:
-        response = requests.get("https://cloud.iexapis.com/stable/stock/{}/news/last/10?token={}".format(ticker[x], token))
-        newsresult = json.dumps(response.json(), sort_keys=True)
-        newsdict = json.loads(newsresult)
-        newsresultdf = pd.json_normalize(newsdict) 
-        newsresultdf.to_excel(writer, sheet_name=x)
-
-    writer.close()
-
-def getFundamentalValuations():
-    writer = pd.ExcelWriter(path[key], engine='xlsxwriter')
-
-    for x in ticker:
-        response = requests.get("https://cloud.iexapis.com/stable/time-series/FUNDAMENTAL_VALUATIONS/{}?token={}".format(ticker[x], token))
-        keyresult = json.dumps(response.json(), sort_keys=True)
-        keydict = json.loads(keyresult)
-        keyresultdf = pd.json_normalize(keydict) 
-        keyresultdf.to_excel(writer, sheet_name=x)
-
-    writer.close()
 
 if __name__ == '__main__':
-
-    getIEXCloudData()
-    getCorporateActions()
-    getFundamentalValuations()
+    
+    for x in modulelist:
+        e = stockdata(ticker, x)
+        # e.print_value()
+        e.getdata()
